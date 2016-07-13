@@ -33,19 +33,27 @@
         <field name="arch" type="xml">
             <form string="Formulario de Registro" >
             	<header>
+            		<field name="state" widget="statusbar"/>
             	</header>
             	<sheet>
             		
             			<field name="photo" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;photo&quot;, &quot;size&quot;: [90, 90]}" />
             		<group colspan="4">
             			<group >
+            				<field name="id"/>
             				<field name="name"/>
             				<field name="last_name"/>
             			</group>
             			<group>
+            				<field name="active"/>
             				<field name="create_date"/>
             			</group>
             		</group>
+            		<notebook>
+            			<page string="Comentarios">
+            				<field name="notes" />
+            			</page>
+            		</notebook>
             	</sheet>
             </form>
         </field>
