@@ -22,6 +22,7 @@ class res_partner(models.Model):
     student_id = fields.Many2one('academy.student', 'Estudiante')
 
 class academy_student(models.Model):
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _name = 'academy.student'
     _description = 'Modelo de Formulario para Estudiantes'
     name = fields.Char('Nombre', size=128, required=True)
@@ -43,6 +44,10 @@ class academy_student(models.Model):
     country = fields.Many2one('res.country', 'Pais',
                                 related='partner_id.country_id', readonly=True)
 
+    invoice_ids = fields.Many2many('account.invoice',
+                                    'student_invoice_rel',
+                                    'student_id','invoice_id',
+                                    'Facturas')
 
     @api.constrains('curp')
     @api.one
@@ -80,6 +85,7 @@ class academy_student(models.Model):
                 'name': res.name+" "+res.last_name,
                 'company_type': 'student',
                 'student_id': res.id,
+                'customer': True,
                 }
         partner_obj.create(vals_to_partner)
         return res
