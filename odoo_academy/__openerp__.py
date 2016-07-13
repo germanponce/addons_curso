@@ -13,7 +13,7 @@
     'category' : 'Customizaciones',
     'website': 'http://ww.argil.mx',
     'images' : [],
-    'depends' : [],
+    'depends' : ['sale',],
     'data': [
         'academy.xml',
     ],

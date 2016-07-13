@@ -11,6 +11,20 @@
             
         </field>
     </record> -->
+	
+<!-- 	<record model="ir.ui.view" id="herencia_res_partner_academy">
+        <field name="name">res.partner.academy</field>
+        <field name="model">res.partner</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="company_type" position="after" >
+            	<group col="4">
+            	<field name="is_school" widget="radio" class="oe_edit_only" options="{'horizontal': true}"/>
+            </group>
+            </field>
+        </field>
+    </record> -->
 
 	<record model="ir.ui.view" id="tree_student_id">
         <field name="name">academy.student.tree</field>
@@ -42,11 +56,13 @@
             			<group >
             				<field name="id"/>
             				<field name="name"/>
-            				<field name="last_name"/>
+            				<field name="last_name" attrs="{'invisible':[('name','=',False)]}"/>
+            				<!-- required, readonly, invisible -->
             			</group>
             			<group>
             				<field name="active"/>
             				<field name="create_date"/>
+            				<field name="partner_id" domain="[('company_type','=','is_school')]"/>
             			</group>
             		</group>
             		<notebook>
