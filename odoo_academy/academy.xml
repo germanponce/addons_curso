@@ -2,6 +2,55 @@
 <openerp>
     <data>
 	
+	<!-- Estructura de la Vista en Odoo
+	<record model="ir.ui.view" id="">
+        <field name="name"></field>
+        <field name="model"></field>
+        <field name="type"></field>
+        <field name="arch" type="xml">
+            
+        </field>
+    </record> -->
+
+	<record model="ir.ui.view" id="tree_student_id">
+        <field name="name">academy.student.tree</field>
+        <field name="model">academy.student</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Listado de Estudiantes">
+            	<field name="name" />
+            	<field name="last_name" />
+            	<field name="create_date" />
+
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="academy_studen_form_id">
+        <field name="name">academy.student.form</field>
+        <field name="model">academy.student</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Formulario de Registro" >
+            	<header>
+            	</header>
+            	<sheet>
+            		
+            			<field name="photo" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;image_medium&quot;, &quot;size&quot;: [90, 90]}" />
+            		<group colspan="4">
+            			<group >
+            				<field name="name"/>
+            				<field name="last_name"/>
+            			</group>
+            			<group>
+            				<field name="create_date"/>
+            			</group>
+            		</group>
+            	</sheet>
+            </form>
+        </field>
+    </record>
+
 	<record model="ir.actions.act_window" id="act_student_academy">
         <field name="name">Registro de Estudiantes</field>
         <field name="res_model">academy.student</field>
@@ -14,7 +63,7 @@
 
     <menuitem id="id_menu_student_act" parent="id_menu_student" name="Estudiantes"  action="act_student_academy" sequence="0"/>
 
-    
+
 
 	</data>
 </openerp>
