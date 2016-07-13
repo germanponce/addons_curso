@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	
+	<record model="ir.actions.act_window" id="act_student_academy">
+        <field name="name">Registro de Estudiantes</field>
+        <field name="res_model">academy.student</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="id_principal_academy" name="Odoo Academy"/>
+
+    <menuitem id="id_menu_student" parent="id_principal_academy" name="Registros" sequence="0"/>
+    
+    <menuitem id="id_menu_student_act" parent="id_menu_student" name="Estudiantes"  action="act_student_academy" sequence="0"/>
+
+	</data>
+</openerp>
