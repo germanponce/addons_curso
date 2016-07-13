@@ -57,6 +57,7 @@
             				<field name="id"/>
             				<field name="name"/>
             				<field name="last_name" attrs="{'invisible':[('name','=',False)]}"/>
+            				<field name="curp" placeholder="PODG890625HVZNMR02"/>
             				<!-- required, readonly, invisible -->
             			</group>
             			<group>
@@ -66,6 +67,14 @@
             			</group>
             		</group>
             		<notebook>
+            			<page string="Calificaciones">
+            				<field name="calificaciones_ids" >
+            					<tree string="Calificaciones" editable="bottom">
+            						<field name="name" required="1"/>
+            						<field name="calificacion" required="1" />
+            					</tree>
+            				</field>
+            			</page>
             			<page string="Comentarios">
             				<field name="notes" />
             			</page>
@@ -81,12 +90,21 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+	<record model="ir.actions.act_window" id="act_student_calificaciones">
+        <field name="name">Calificaciones</field>
+        <field name="res_model">academy.calificacion</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <menuitem id="id_principal_academy" name="Odoo Academy"/>
 
     <menuitem id="id_menu_student" parent="id_principal_academy" name="Registros" sequence="0"/>
 
     <menuitem id="id_menu_student_act" parent="id_menu_student" name="Estudiantes"  action="act_student_academy" sequence="0"/>
-
+	
+    <menuitem id="id_menu_config" parent="id_principal_academy" name="Configuracion" sequence="1"/>
+	
+	<menuitem id="id_menu_calificacion_act" parent="id_menu_config"  action="act_student_calificaciones" sequence="0"/>
 
 
 	</data>
