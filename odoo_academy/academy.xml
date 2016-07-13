@@ -11,8 +11,10 @@
     <menuitem id="id_principal_academy" name="Odoo Academy"/>
 
     <menuitem id="id_menu_student" parent="id_principal_academy" name="Registros" sequence="0"/>
-    
+
     <menuitem id="id_menu_student_act" parent="id_menu_student" name="Estudiantes"  action="act_student_academy" sequence="0"/>
+
+    
 
 	</data>
 </openerp>
