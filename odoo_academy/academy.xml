@@ -12,19 +12,17 @@
         </field>
     </record> -->
 	
-<!-- 	<record model="ir.ui.view" id="herencia_res_partner_academy">
+	<record model="ir.ui.view" id="herencia_res_partner_academy">
         <field name="name">res.partner.academy</field>
         <field name="model">res.partner</field>
         <field name="type">form</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <field name="company_type" position="after" >
-            	<group col="4">
-            	<field name="is_school" widget="radio" class="oe_edit_only" options="{'horizontal': true}"/>
-            </group>
+            <field name="category_id" position="after" >
+            	<field name="student_id" readonly="1"/>
             </field>
         </field>
-    </record> -->
+    </record>
 
 	<record model="ir.ui.view" id="tree_student_id">
         <field name="name">academy.student.tree</field>
@@ -56,14 +54,17 @@
             			<group >
             				<field name="id"/>
             				<field name="name"/>
-            				<field name="last_name" attrs="{'invisible':[('name','=',False)]}"/>
-            				<field name="curp" placeholder="PODG890625HVZNMR02"/>
+            				<field name="last_name" attrs="{'invisible':[('name','=',False)]}" required="1"/>
+            				<field name="curp" placeholder="PODG890625HVZNMR02" required="1"/>
+            				<field name="age" />
+
             				<!-- required, readonly, invisible -->
             			</group>
             			<group>
             				<field name="active"/>
             				<field name="create_date"/>
             				<field name="partner_id" domain="[('company_type','=','is_school')]"/>
+            				<field name="country" />
             			</group>
             		</group>
             		<notebook>
