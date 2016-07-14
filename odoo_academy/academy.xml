@@ -75,6 +75,16 @@
         <field name="arch" type="xml">
             <form string="Formulario de Registro" >
             	<header>
+            		<button string="Confirmar" name="confirm" type="object"  icon="gtk-ok" states="draft" />
+            		<button string="Cancelar" name="cancel" type="object"  icon="gtk-cancel" states="draft" />
+            		<button string="Egresar" name="done" type="object"  icon="gtk-execute" states="progress" />
+
+            		<button string="Borrador" name="draft" type="object"  icon="gtk-ok" states="cancel" />
+            		<!-- 
+						Function,
+						Action,
+						Workflow
+            		-->
             		<field name="state" widget="statusbar"/>
             	</header>
             	<sheet>
@@ -83,19 +93,19 @@
             		<group colspan="4">
             			<group >
             				<field name="id"/>
-            				<field name="name"/>
-            				<field name="last_name" attrs="{'invisible':[('name','=',False)]}" required="1"/>
+            				<field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+            				<field name="last_name" required="1" attrs="{'readonly':[('state','!=','draft')],'invisible':[('name','=',False)]}"/>
             				<field name="curp" placeholder="PODG890625HVZNMR02" required="1"/>
-            				<field name="age" />
+            				<field name="age" attrs="{'readonly':[('state','!=','draft')]}"/>
 
             				<!-- required, readonly, invisible -->
             			</group>
             			<group>
             				<field name="active"/>
             				<field name="create_date"/>
-            				<field name="partner_id" domain="[('company_type','=','is_school')]"/>
-            				<field name="country" />
-            				<field name="grado_id" required="1" />
+            				<field name="partner_id" domain="[('company_type','=','is_school')]" attrs="{'readonly':[('state','!=','draft')]}"/>
+            				<field name="country" attrs="{'readonly':[('state','!=','draft')]}" />
+            				<field name="grado_id" required="1" attrs="{'readonly':[('state','!=','draft')]}" />
             			</group>
             		</group>
             		<notebook>

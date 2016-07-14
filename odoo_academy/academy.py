@@ -121,7 +121,8 @@ class academy_student(models.Model):
     active = fields.Boolean('Activo')
     state = fields.Selection([('draft','Documento Borrador'),
                               ('progress','Progeso'),
-                              ('done','Egresado'),], 'Estado', default="draft")
+                              ('done','Egresado'),
+                              ('cancel','Expulsado')], 'Estado', default="draft")
     age  = fields.Integer('Edad', required=True)
     curp = fields.Char('CURP', size=18)
 
@@ -170,6 +171,27 @@ class academy_student(models.Model):
     _defaults = {  
         'active': True,
         }
+
+
+    @api.multi
+    def done(self):
+        self.state = 'done'
+        return True
+
+    @api.multi
+    def confirm(self):
+        self.state = 'progress'
+        return True
+
+    @api.multi
+    def cancel(self):
+        self.state = 'cancel'
+        return True
+
+    @api.multi
+    def draft(self):
+        self.state = 'draft'
+        return True
 
     #### METODO ESCRITURA self, cr, uid, ids, {}, context
     @api.multi

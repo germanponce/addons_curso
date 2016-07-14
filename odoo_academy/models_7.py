@@ -24,12 +24,12 @@ class academy_califiacion(osv.osv):
     def _check_calificacion(self, cr, uid, ids, context=None): 
         for rec in self.browse(cr, uid, ids, context):
             print "############ rec.calificacion ",rec.calificacion
-            if rec.calificacion < 5:
+            if rec.calificacion < 5 or rec.calificacion > 10:
                 return False
         return True
 
     _constraints = [(_check_calificacion, 
-        'Error: La Calificacion Minima debe ser de 5 puntos', ['calificacion']), ] 
+        'Error: La Calificacion Minima debe ser de 5 puntos y Menor o igual a 10.', ['calificacion']), ] 
 
 class academy_materia(osv.osv):
     _name = 'academy.materia'
