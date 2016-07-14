@@ -126,7 +126,7 @@ class academy_student(models.Model):
                                     'Facturas')
     grado_id = fields.Many2one('academy.grado', 'Grado')
 
-    promedio = fields.Float('Promedio',)
+    promedio = fields.Float('Promedio', digits=(14,2))
 
     @api.onchange('grado_id')
     def onchange_grado(self):
