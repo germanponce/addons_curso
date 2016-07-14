@@ -18,8 +18,10 @@ class academy_grado(models.Model):
 
     @api.depends('name', 'grupo')
     def calculate_name(self):
-        complete_name = self.name+" / "+ self.grupo
-        self.complete_name = complete_name
+        print "########## SELF ", self
+        if self.name and self.grupo:
+            complete_name = self.name+" / "+ self.grupo
+            self.complete_name = complete_name
 
     _rec_name = 'complete_name'
 
@@ -37,7 +39,7 @@ class academy_grado(models.Model):
     materia_ids = fields.One2many('academy.materia.list','grado_id',
         'Materias')
 
-    complete_name = fields.Char('Nombre Completo', size=128, compute="calculate_name")
+    complete_name = fields.Char('Nombre Completo', size=128, compute="calculate_name", store=True)
 
 class account_move(models.Model):
     _name = 'account.move'
@@ -91,6 +93,16 @@ class academy_student(models.Model):
     _name = 'academy.student'
     _description = 'Modelo de Formulario para Estudiantes'
 
+    @api.depends('calificaciones_ids')
+    def calcula_promedio(self):
+        acum = 0.0
+        for xcal in self.calificaciones_ids:
+            acum+= xcal.calificacion
+        if acum:
+            promedio = acum/len(self.calificaciones_ids)
+            self.promedio = promedio
+
+
     @api.model
     def _get_school_default(self):
         print "#### SCHOOL METODO"
@@ -126,21 +138,25 @@ class academy_student(models.Model):
                                     'Facturas')
     grado_id = fields.Many2one('academy.grado', 'Grado')
 
-    promedio = fields.Float('Promedio', digits=(14,2))
+    promedio = fields.Float('Promedio', digits=(14,2), compute="calcula_promedio")
 
     @api.onchange('grado_id')
     def onchange_grado(self):
-        print "#### SELF GRADO >>> ", self.grado_id
-        calificaciones_list = []
-        print "##### self.grado_id.materia_ids ",self.grado_id.materia_ids
-        for materia in self.grado_id.materia_ids:
-            xval = (0,0,{
-                'name': materia.materia_id.id,
-                'calificacion': 5
-                })
-            calificaciones_list.append(xval)
-        print "#### CALIFICACIONES >>> ", calificaciones_list
-        self.update({'calificaciones_ids':calificaciones_list})
+        if not self.grado_id:
+            return {}
+        if self.grado_id:
+            print "#### SELF GRADO >>> ", self.grado_id
+            print "#### SELF GRADO >>> ", self.grado_id.id
+            calificaciones_list = []
+            print "##### self.grado_id.materia_ids ",self.grado_id.materia_ids
+            for materia in self.grado_id.materia_ids:
+                xval = (0,0,{
+                    'name': materia.materia_id.id,
+                    'calificacion': 5
+                    })
+                calificaciones_list.append(xval)
+            print "#### CALIFICACIONES >>> ", calificaciones_list
+            self.update({'calificaciones_ids':calificaciones_list})
 
 
     @api.constrains('curp')
