@@ -16,6 +16,13 @@ class academy_grado(models.Model):
     _name = 'academy.grado'
     _description = 'Modelo Grados con un listado de Materias'
 
+    @api.depends('name', 'grupo')
+    def calculate_name(self):
+        complete_name = self.name+" / "+ self.grupo
+        self.complete_name = complete_name
+
+    _rec_name = 'complete_name'
+
     name = fields.Selection([
                             ('1','Primero'),
                             ('2','Segundo'),
@@ -30,6 +37,7 @@ class academy_grado(models.Model):
     materia_ids = fields.One2many('academy.materia.list','grado_id',
         'Materias')
 
+    complete_name = fields.Char('Nombre Completo', size=128, compute="calculate_name")
 
 class account_move(models.Model):
     _name = 'account.move'
@@ -118,6 +126,7 @@ class academy_student(models.Model):
                                     'Facturas')
     grado_id = fields.Many2one('academy.grado', 'Grado')
 
+    promedio = fields.Float('Promedio',)
 
     @api.onchange('grado_id')
     def onchange_grado(self):

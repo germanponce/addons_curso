@@ -141,8 +141,7 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Grado">
-            	<field name="name" />
-            	<field name="grupo" />
+            	<field name="complete_name" />
             </tree>
         </field>
     </record>
