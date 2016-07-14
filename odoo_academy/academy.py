@@ -98,5 +98,13 @@ class academy_student(models.Model):
         if partner_ids:
             for partner in partner_ids:
                 partner.unlink()
+        ##### Utilizando SQL directo en Odoo ####
+        # self.env.cr("""
+        #     select id from res_partner where student_id=%s
+        #     """ % self.id)
+        # cr_res = cr.fetchall()
+        # if cr_res:
+        #     partner_ids = [x[0] for x in cr_res if x]
+        #########################################
         res = super(academy_student, self).unlink()
         return res
