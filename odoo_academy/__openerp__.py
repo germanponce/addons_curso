@@ -9,6 +9,7 @@
 
     Puede Exir un Registro de Clientes/Proovedores con el nombre Escuela Comodin y este sera el que tome por defecto en la creación de Estudiantes.
 
+    Para poder Facturar es necesario tener productos con la categoria Facturacion Colegiatura.
 
     """,
     'category' : 'Customizaciones',

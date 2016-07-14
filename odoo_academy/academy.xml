@@ -27,6 +27,48 @@
         </field>
     </record> -->
 
+	<!-- VISTAS PARA UN ASISTENTE -->
+	    <record id="wizard_student_invoice" model="ir.ui.view">
+	    <field name="name">make.student.invoice.form</field>
+	    <field name="model">make.student.invoice</field>
+	    <field name="type">form</field>
+	    <field name="arch" type="xml">
+	        <form string="Asistente para Generacion de Factura">
+	        	<header>
+	        	</header>
+	        	<sheet>
+	        		<separator string="Introduce el Diario para la Factura"/>
+	        		<field name="journal_id" required="1"/>
+	        	</sheet>
+	        	<footer>
+	        		<div align="center">
+	        			<button name="make_invoice" string="Generar" type="object" icon="gtk-execute" />
+	        			<button special="cancel" string="Cerrar" type="object" icon="gtk-cancel"/>
+	        		</div>
+	        	</footer>
+	            
+	           </form>
+	        </field>
+	    </record>
+
+
+        <!--============================================ACCION========================================-->
+        <act_window
+            name="Generacion de Facturacion"
+            res_model="make.student.invoice"
+            src_model="academy.student"
+            view_mode="form" target="new"
+            key2="client_action_multi"
+            id="student_invoice_act"/>
+
+	<!-- CREAR REGISTRO DESDE XML -->
+
+	<record model="product.category" id="category_student">
+		<field name="name">Facturacion Colegiatura</field>
+
+	</record>
+
+	<!--  HEREDANDO VISTAS EN ODOO -->
 	<record model="ir.ui.view" id="account_move_mail_inherit">
         <field name="name">account.move.academy</field>
         <field name="model">account.move</field>
@@ -54,6 +96,7 @@
         </field>
     </record>
 
+	<!-- VISTAS PRINCIPALES DE MIS CLASES -->
 	<record model="ir.ui.view" id="tree_student_id">
         <field name="name">academy.student.tree</field>
         <field name="model">academy.student</field>
@@ -193,11 +236,12 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="id_principal_academy" name="Odoo Academy"/>
+	<!-- REGISTRO DE MENUS -->
+    <menuitem id="id_principal_academy" name="Odoo Academy"/><!-- MENU PRINCIPAL O PADRE -->
 
-    <menuitem id="id_menu_student" parent="id_principal_academy" name="Registros" sequence="0"/>
+    <menuitem id="id_menu_student" parent="id_principal_academy" name="Registros" sequence="0"/><!--SUBMENU -->
 
-    <menuitem id="id_menu_student_act" parent="id_menu_student" name="Estudiantes"  action="act_student_academy" sequence="0"/>
+    <menuitem id="id_menu_student_act" parent="id_menu_student" name="Estudiantes"  action="act_student_academy" sequence="0"/><!-- MENU CON ACCIONES DE VENTANA -->
 	
     <menuitem id="id_menu_config" parent="id_principal_academy" name="Configuracion" sequence="1"/>
 	

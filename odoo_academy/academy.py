@@ -7,6 +7,55 @@ from openerp.exceptions import UserError, RedirectWarning, ValidationError
 #     _name = 'stock.warehouse'
 #     _inherit = ['mail.thread', 'ir.needaction_mixin','stock.warehouse']
     
+class make_student_invoice (models.TransientModel):
+    _name = 'make.student.invoice'
+    _description = 'Asistente para Generacion de Facturas'
+
+    journal_id = fields.Many2one('account.journal', 'Diario', domain="[('type', '=','sale')]")
+
+    @api.multi
+    def make_invoice(self):
+        print "#### AQUI GENERAREMOS LA FACTURA"
+        print "######### CONTEXT >>>> ", self._context
+        #### active_id o active_ids
+        #### active_model
+        active_ids = self._context['active_ids']
+        print "########## ACTIVE IDS >>>> ", active_ids
+        category_obj = self.env['product.category']
+        category_id = category_obj.search([('name','=','Facturacion Colegiatura')])
+        print "########## CATEGORY ID >>>> ", category_id
+        student_br = self.env['academy.student'].search([('id','=',active_ids[0])])
+
+        if category_id:
+            product_obj = self.env['product.product']
+            product_ids = product_obj.search([('categ_id','=',category_id.id)])
+            print "########### PRODUCTOS >>> ",product_ids
+            invoice_obj = self.env['account.invoice']
+
+            partner_br = self.env['res.partner'].search([('student_id','=',student_br.id)]) ## active_ids[0]
+            partner_id = False
+            if partner_br:
+                partner_id = partner_br[0].id
+            print "#### PARTNER ID >>>> ", partner_id
+            print "########### partner_br[0].property_account_receivable_id.id ",partner_br[0].property_account_receivable_id.id
+            invoice_lines = []
+            for pr in product_ids:
+                xline = (0,0,{
+                    'product_id': pr.id,
+                    'price_unit': pr.list_price,
+                    'quantity': 1,
+                    'account_id': pr.categ_id.property_account_income_categ_id.id,
+                    'name': pr.name + "[ "+str(pr.default_code)+"]",
+                    })
+                invoice_lines.append(xline)
+            vals = {
+                    'partner_id': partner_id,
+                    'account_id': partner_br[0].property_account_receivable_id.id,
+                    'invoice_line_ids': invoice_lines,
+                    }
+            invoice_id = invoice_obj.create(vals)
+        return True
+
 class academy_materia_list(models.Model):
     _name = 'academy.materia.list'
     grado_id = fields.Many2one('academy.grado', 'ID Referencia')
