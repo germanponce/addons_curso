@@ -7,13 +7,14 @@
     'sequence': 30,
     'description': """
 
+    Puede Exir un Registro de Clientes/Proovedores con el nombre Escuela Comodin y este sera el que tome por defecto en la creación de Estudiantes.
 
 
     """,
     'category' : 'Customizaciones',
     'website': 'http://ww.argil.mx',
     'images' : [],
-    'depends' : ['sale',],
+    'depends' : ['sale','account'],
     'data': [
         'academy.xml',
     ],

@@ -4,6 +4,28 @@ from openerp import models, fields, api, _
 from openerp.exceptions import UserError, RedirectWarning, ValidationError
 
 
+class account_move(models.Model):
+    _name = 'account.move'
+    _inherit = ['mail.thread', 'ir.needaction_mixin', 'account.move']
+    state = fields.Selection([('draft', 'Unposted'), ('posted', 'Posted')], string='Status',
+      required=True, readonly=True, copy=False, default='draft',
+      help='All manually created new journal entries are usually in the status \'Unposted\', '
+           'but you can set the option to skip that status on the related journal. '
+           'In that case, they will behave as journal entries automatically created by the '
+           'system on document validation (invoices, bank statements...) and will be created '
+           'in \'Posted\' status.', track_visibility='onchange')
+
+    @api.multi
+    def write(self, values):
+        print "#### SELF UID ", self._uid
+        if 'state' in values:
+            user_br = self.env['res.users'].browse([self._uid])
+            msg = _("Se modifico el estado del Movimiento Contable por el usuario %s" %
+                (user_br.name,))
+            self.message_post(body=msg)
+        result = super(account_move, self).write(values)
+        return result
+
 class res_partner(models.Model):
     _name = 'res.partner'
     _inherit = 'res.partner'
@@ -20,6 +42,14 @@ class res_partner(models.Model):
                  'by hand instead of a true function field. When migrating to '
                  'the new API the code should be simplified.')
     student_id = fields.Many2one('academy.student', 'Estudiante')
+    
+    property_payment_term_id = fields.Many2one('account.payment.term', company_dependent=True,
+        string ='Customer Payment Term',
+        help="This payment term will be used instead of the default one for sale orders and customer invoices", oldname="property_payment_term", track_visibility='onchange')
+    property_supplier_payment_term_id = fields.Many2one('account.payment.term', company_dependent=True,
+         string ='Vendor Payment Term',
+         help="This payment term will be used instead of the default one for purchase orders and vendor bills", oldname="property_supplier_payment_term", track_visibility='onchange')
+
 
 class academy_student(models.Model):
     _inherit = ['mail.thread', 'ir.needaction_mixin']
@@ -36,7 +66,7 @@ class academy_student(models.Model):
         print "##### SCHOOL IDS >>> ", school_id
         return school_id
 
-    name = fields.Char('Nombre', size=128, required=True, )
+    name = fields.Char('Nombre', size=128, required=True, track_visibility='onchange')
     last_name = fields.Char('Apellido', size=128)
     photo = fields.Binary('Fotografia')
     create_date = fields.Datetime('Fecha Creacion', readonly=True)
