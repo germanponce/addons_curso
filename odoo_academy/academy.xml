@@ -123,6 +123,8 @@
             		<button string="Egresar" name="done" type="object"  icon="gtk-execute" states="progress" />
 
             		<button string="Borrador" name="draft" type="object"  icon="gtk-ok" states="cancel" />
+            		<button name="%(student_invoice_act)d" string="Generar Factura"
+                        type="action" class="btn-primary" icon="gtk-execute"/>
             		<!-- 
 						Function,
 						Action,
@@ -165,6 +167,9 @@
             			</page>
             			<page string="Facturas" >
             				<field name="invoice_ids" />
+            				<group class="oe_subtotal_footer oe_right" colspan="2" name="grupo_amount">
+				                <field name="amount_invoice" />
+				            </group>
             			</page>
             			<page string="Comentarios">
             				<field name="notes" />

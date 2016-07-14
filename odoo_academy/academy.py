@@ -25,7 +25,8 @@ class make_student_invoice (models.TransientModel):
         category_id = category_obj.search([('name','=','Facturacion Colegiatura')])
         print "########## CATEGORY ID >>>> ", category_id
         student_br = self.env['academy.student'].search([('id','=',active_ids[0])])
-
+        if student_br.state in ('draft','cancel'):
+            raise ValidationError(_('No puedes Generar una Factura para un Estudiante Expulsado o su Registro en Borrador.'))
         if category_id:
             product_obj = self.env['product.product']
             product_ids = product_obj.search([('categ_id','=',category_id.id)])
@@ -54,6 +55,12 @@ class make_student_invoice (models.TransientModel):
                     'invoice_line_ids': invoice_lines,
                     }
             invoice_id = invoice_obj.create(vals)
+            print "##### RECORDSET INVOICE >>>> ", invoice_id
+            invoice_list = [x.id for x in student_br.invoice_ids]
+            invoice_list.append(invoice_id.id)
+            student_br.write({
+                'invoice_ids': [(6, 0, invoice_list)],
+                })
         return True
 
 class academy_materia_list(models.Model):
@@ -151,6 +158,13 @@ class academy_student(models.Model):
             promedio = acum/len(self.calificaciones_ids)
             self.promedio = promedio
 
+    @api.depends('invoice_ids')
+    def calcula_amount(self):
+        acum = 0.0
+        for xcal in self.invoice_ids:
+            acum+= xcal.amount_total
+        if acum:
+            self.amount_invoice = acum
 
     @api.model
     def _get_school_default(self):
@@ -189,6 +203,7 @@ class academy_student(models.Model):
     grado_id = fields.Many2one('academy.grado', 'Grado')
 
     promedio = fields.Float('Promedio', digits=(14,2), compute="calcula_promedio")
+    amount_invoice = fields.Float('Monto Facturado', digits=(14,2), compute="calcula_amount", store=True)
 
     @api.onchange('grado_id')
     def onchange_grado(self):
