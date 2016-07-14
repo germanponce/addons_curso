@@ -25,7 +25,18 @@ class academy_student(models.Model):
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _name = 'academy.student'
     _description = 'Modelo de Formulario para Estudiantes'
-    name = fields.Char('Nombre', size=128, required=True)
+
+    @api.model
+    def _get_school_default(self):
+        print "#### SCHOOL METODO"
+        print "#### SCHOOL METODO"
+        print "#### SCHOOL METODO"
+        partner_obj = self.env['res.partner']
+        school_id = partner_obj.search([('name','=','Escuela Comodin')])
+        print "##### SCHOOL IDS >>> ", school_id
+        return school_id
+
+    name = fields.Char('Nombre', size=128, required=True, )
     last_name = fields.Char('Apellido', size=128)
     photo = fields.Binary('Fotografia')
     create_date = fields.Datetime('Fecha Creacion', readonly=True)
@@ -33,12 +44,12 @@ class academy_student(models.Model):
     active = fields.Boolean('Activo')
     state = fields.Selection([('draft','Documento Borrador'),
                               ('progress','Progeso'),
-                              ('done','Egresado'),], 'Estado')
+                              ('done','Egresado'),], 'Estado', default="draft")
     age  = fields.Integer('Edad', required=True)
     curp = fields.Char('CURP', size=18)
 
     ### Relacionales ###
-    partner_id = fields.Many2one('res.partner', 'Escuela')
+    partner_id = fields.Many2one('res.partner', 'Escuela', default=_get_school_default, copy=False)
     calificaciones_ids = fields.One2many('academy.calificacion','student_id',
         'Calificaciones')
     country = fields.Many2one('res.country', 'Pais',
@@ -52,8 +63,6 @@ class academy_student(models.Model):
     @api.constrains('curp')
     @api.one
     def _check_curp(self):
-        print "#### SELF", self
-        print "#### SELF ", self.env
         if len(self.curp) < 18:
             raise ValidationError(_('CURP debe contener 18 Caracteres.'))
 
@@ -61,14 +70,11 @@ class academy_student(models.Model):
 
     _defaults = {  
         'active': True,
-        'state': 'draft',
-
         }
 
     #### METODO ESCRITURA self, cr, uid, ids, {}, context
     @api.multi
     def write(self, values):
-        print "#### VALUES >>>> ", values
         if 'curp' in values:
             values.update({
                 'curp':values['curp'].upper(),
@@ -78,9 +84,17 @@ class academy_student(models.Model):
 
     @api.model
     def create(self, values):
+        exist_ids = []
+        if values['name']:
+            nombre = values['name']
+            exist_ids = self.env['academy.student'].search([('name','=',nombre)])
+            new_name = values['name']+" (Copia)" if exist_ids else values['name']            
+            values['name'] = new_name
+
         res = super(academy_student, self).create(values)
-        print "###### RES >>>> ", res
+        res.name = new_name
         partner_obj = self.env['res.partner']
+
         vals_to_partner = {
                 'name': res.name+" "+res.last_name,
                 'company_type': 'student',
@@ -93,10 +107,12 @@ class academy_student(models.Model):
     @api.multi
     def unlink(self):
         partner_obj = self.env['res.partner']
-        partner_ids = partner_obj.search([('student_id','=',self.id)])
+        print "### SELF ID >>> ", self.ids
+        partner_ids = partner_obj.search([('student_id','in',self.ids)])
         print "#### PARTNER IDS >>>> ", partner_ids
         if partner_ids:
             for partner in partner_ids:
+                print "### PARTNER >>>> ", partner
                 partner.unlink()
         ##### Utilizando SQL directo en Odoo ####
         # self.env.cr("""
