@@ -2,6 +2,15 @@
 
 from openerp.osv import fields, osv
 
+# class stock_warehouse(osv.osv):
+#     _name = 'stock.warehouse'
+#     # _inherit = ['mail.thread', 'ir.needaction_mixin','stock.warehouse']
+
+#     def create(self, cr, uid, vals, context=None):
+#         print "############ VALS >>>> ", vals
+#         res = super(stock_warehouse, self).create(cr, uid, vals, context)
+#         return res
+
 class academy_califiacion(osv.osv):
     _name = 'academy.calificacion'
     _description = 'Calificaciones del Estudiante'
@@ -26,7 +35,7 @@ class academy_materia(osv.osv):
     _name = 'academy.materia'
     _description = 'Materias del Estudiante'
     _columns = {
-        'name': fields.char('Nombre')
+        'name': fields.char('Nombre'),
     }
     _sql_constraints = [('name_uniq', 'unique (name)', 
         'El nombre de la Materia debe ser unico!'),]

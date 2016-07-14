@@ -3,6 +3,33 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import UserError, RedirectWarning, ValidationError
 
+# class stock_warehouse(models.Model):
+#     _name = 'stock.warehouse'
+#     _inherit = ['mail.thread', 'ir.needaction_mixin','stock.warehouse']
+    
+class academy_materia_list(models.Model):
+    _name = 'academy.materia.list'
+    grado_id = fields.Many2one('academy.grado', 'ID Referencia')
+    materia_id = fields.Many2one('academy.materia', 'Materia', required=True)
+
+class academy_grado(models.Model):
+    _name = 'academy.grado'
+    _description = 'Modelo Grados con un listado de Materias'
+
+    name = fields.Selection([
+                            ('1','Primero'),
+                            ('2','Segundo'),
+                            ('3','Tercero'),
+                            ('4','Cuarto'),('5','Quinto'),('6','Sexto')],
+                            'Grado', required=True)
+    grupo = fields.Selection([
+                            ('a','A'),
+                            ('b','B'),
+                            ('c','C'),
+                            ], 'Grupo')
+    materia_ids = fields.One2many('academy.materia.list','grado_id',
+        'Materias')
+
 
 class account_move(models.Model):
     _name = 'account.move'
@@ -89,6 +116,23 @@ class academy_student(models.Model):
                                     'student_invoice_rel',
                                     'student_id','invoice_id',
                                     'Facturas')
+    grado_id = fields.Many2one('academy.grado', 'Grado')
+
+
+    @api.onchange('grado_id')
+    def onchange_grado(self):
+        print "#### SELF GRADO >>> ", self.grado_id
+        calificaciones_list = []
+        print "##### self.grado_id.materia_ids ",self.grado_id.materia_ids
+        for materia in self.grado_id.materia_ids:
+            xval = (0,0,{
+                'name': materia.materia_id.id,
+                'calificacion': 5
+                })
+            calificaciones_list.append(xval)
+        print "#### CALIFICACIONES >>> ", calificaciones_list
+        self.update({'calificaciones_ids':calificaciones_list})
+
 
     @api.constrains('curp')
     @api.one
