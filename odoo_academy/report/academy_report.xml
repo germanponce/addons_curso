@@ -12,13 +12,36 @@
                 </t>
             </t>
         </template> -->
+
+<!-- Herencia de Reportes -->
+
+    <template id="report_invoice_academy_inherit" inherit_id="account.report_invoice_document">
+            <xpath expr="//div[@class='row mt32 mb32']" position="after">
+            
+            <h1>
+                <span t-if="o.partner_id.student_id">
+                    <font color="blue">
+                        <font color="black">Estudiante: </font><span t-field="o.partner_id.student_id.name" /> <span t-field="o.partner_id.student_id.last_name" />
+                    </font>
+                    
+                </span>
+            </h1>
+        </xpath>
+    </template>
+    
+
+
+<!--  Template de Reportes -->
+
         <template id="template_report_estudiante">
             <t t-call="report.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="report.external_layout">
                         <div class="page">
                            <h1>
+                            <font color="blue">
                                 <span t-field="o.name" /> <span t-field="o.last_name" />
+                            </font>
                            </h1>
                            <span t-field="o.photo" t-field-options="{&quot;widget&quot;: &quot;image&quot;}"/>
                            <table class="table table-condensed">
@@ -104,20 +127,14 @@
                 <tbody>
             <tr t-foreach="o.invoice_ids" t-as="inv">
                 <td>
-                   <p></p>
                    <span t-field="inv.number"/>
-                   <p></p>
                 </td>
                 
                 <td>
-                   <p></p>
                    <span t-field="inv.date_invoice"/>
-                   <p></p>
                 </td>
                 <td>
-                   <p></p>
                    <span t-field="inv.amount_total"/>
-                   <p></p>
                 </td>
             </tr>
                 </tbody>
