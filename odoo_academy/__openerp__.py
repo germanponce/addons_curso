@@ -13,7 +13,7 @@
 
     Para trabajar los reportes el modulo en Excel es necesario Instalar la libreri de python xlxswriter
         - sudo pip install xlxswriter
-
+        - Documentacion: http://xlsxwriter.readthedocs.io/
 
 
     """,
