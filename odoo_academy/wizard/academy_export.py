@@ -42,10 +42,7 @@ class export_invoices_school_report(models.Model):
         date = datetime.now().strftime('%d-%m-%Y')
         datas_fname = "Reporte Facturacion de Escuelas "+str(date)+".csv" # Nombre del Archivo
         sl = "\n"
-        document_csv = document_csv+"Reporte General de Facturacion de Escuelas y Estudiantes"+sl
-
-        cabeceras_1 = "Escuela"+","+"Monto Facturado"
-        document_csv = document_csv+sl+cabeceras_1
+        document_csv = document_csv+"Reporte General de Facturacion de Escuelas y Estudiantes"
 
         self.env.cr.execute("""
             select partner_id from academy_student
@@ -70,7 +67,9 @@ class export_invoices_school_report(models.Model):
                 amount_invoice = 0.0
             else:
                 amount_invoice = cr_res[0][0]
-            document_csv = document_csv+sl+partner.name+","+str(amount_invoice)
+            cabeceras_1 = sl+"Escuela"+","+"Monto Facturado"
+            document_csv = document_csv+sl+cabeceras_1
+            document_csv = document_csv+sl+partner.name+","+str(amount_invoice)+sl
 
             cabeceras_2 = "Estudiante"+","+"Edad"+","+"Monto Facturado"
             document_csv = document_csv+sl+cabeceras_2
@@ -101,12 +100,85 @@ class export_invoices_school_report(models.Model):
             'views': [(False, 'form')],
             'target': 'new',
             }
+
     @api.multi
     def export_xlsx_file(self,):
         fname=tempfile.NamedTemporaryFile(suffix='.xlsx',delete=False)
 
         workbook = xlsxwriter.Workbook(fname)
         worksheet = workbook.add_worksheet()
+
+        # Widen the first column to make the text clearer.
+        worksheet.set_column('A:K', 20)
+
+        bold = workbook.add_format({'bold': True})
+        worksheet.write('A1', 'Reporte General de Facturacion de Escuelas y Estudiantes', bold)
+
+        self.env.cr.execute("""
+            select partner_id from academy_student
+                group by partner_id;
+            """)
+        cr_res = self.env.cr.fetchall()
+        if not cr_res:
+            return {}
+        partner_list_ids  =[x[0] for x in cr_res if x]
+        partner_obj = self.env['res.partner']
+        partner_search = partner_obj.search([('id','in',tuple(partner_list_ids))])
+
+        a = 2
+        b = 2
+        c = 2
+        d = 2
+        e = 2
+        for partner in partner_search:
+            self.env.cr.execute("""
+                select sum(amount_invoice) from academy_student
+                    where partner_id = %s;
+                """, (partner.id,))
+            cr_res = self.env.cr.fetchall()
+            if not cr_res:
+                amount_invoice = 0.0
+            else:
+                amount_invoice = cr_res[0][0]
+            worksheet.write('A%s'%a,"Escuela", bold)
+            worksheet.write('B%s'%a,"Monto Facturado", bold)
+            e += 1
+            a = b = c = d = e
+            worksheet.write('A%s'%a,partner.name)
+            worksheet.write('B%s'%a, str(amount_invoice))
+            e += 1
+            a = b = c = d = e
+
+            worksheet.write('A%s'%a,"Estudiante",bold)
+            worksheet.write('B%s'%b, "Edad", bold)
+            worksheet.write('C%s'%c, "Monto Facturado", bold)
+            e += 1
+            a = b = c = d = e
+            student_obj = self.env['academy.student']
+            student_ids = student_obj.search([('partner_id','=',partner.id)])
+            if student_ids:
+                for student in student_ids:
+                    worksheet.write('A%s'%a,str(student.name))
+                    worksheet.write('B%s'%b,str(student.age))
+                    worksheet.write('C%s'%c,str(student.amount_invoice))
+                    e += 1
+                    a = b = c = d = e
+                    worksheet.write('A%s'%a,"Facturas del Estudiante",bold)
+                    e += 1
+                    a = b = c = d = e
+                    worksheet.write('A%s'%a,"Folio",bold)
+                    worksheet.write('B%s'%b,"Fecha",bold)
+                    worksheet.write('C%s'%c,"Monto",bold)
+                    e += 1
+                    a = b = c = d = e
+                    for factura in student.invoice_ids:
+                        worksheet.write('A%s'%a,str(factura.number))
+                        worksheet.write('B%s'%b,str(factura.date_invoice))
+                        worksheet.write('C%s'%c,str(factura.amount_total))
+                        e += 1
+                        a = b = c = d = e
+
+        ### Finalizando con la Generación del Reporte en Excel ###
         workbook.close()
         f = open(fname.name, "r")
         data = f.read()
