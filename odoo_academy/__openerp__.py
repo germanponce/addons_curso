@@ -9,9 +9,11 @@
 
     Puede Exir un Registro de Clientes/Proovedores con el nombre Escuela Comodin y este sera el que tome por defecto en la creación de Estudiantes.
 
-    Para poder Facturar es necesario tener productos con la categoria Facturacion Colegiatura.
+    Para poder Facturar es necesario tener productos con la categoria Facturacion Colegiatura, de no hacerlo solo agregara Facturas Vacias.
+
 
     """,
+    'author': 'German Ponce Dominguez',
     'category' : 'Customizaciones',
     'website': 'http://ww.argil.mx',
     'images' : [],

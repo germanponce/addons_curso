@@ -24,43 +24,44 @@ class make_student_invoice (models.TransientModel):
         category_obj = self.env['product.category']
         category_id = category_obj.search([('name','=','Facturacion Colegiatura')])
         print "########## CATEGORY ID >>>> ", category_id
-        student_br = self.env['academy.student'].search([('id','=',active_ids[0])])
-        if student_br.state in ('draft','cancel'):
-            raise ValidationError(_('No puedes Generar una Factura para un Estudiante Expulsado o su Registro en Borrador.'))
-        if category_id:
-            product_obj = self.env['product.product']
-            product_ids = product_obj.search([('categ_id','=',category_id.id)])
-            print "########### PRODUCTOS >>> ",product_ids
-            invoice_obj = self.env['account.invoice']
+        for st_id in active_ids:
+            student_br = self.env['academy.student'].search([('id','=',st_id)])
+            if student_br.state in ('draft','cancel'):
+                raise ValidationError(_('No puedes Generar una Factura para un Estudiante Expulsado o su Registro en Borrador.'))
+            if category_id:
+                product_obj = self.env['product.product']
+                product_ids = product_obj.search([('categ_id','=',category_id.id)])
+                print "########### PRODUCTOS >>> ",product_ids
+                invoice_obj = self.env['account.invoice']
 
-            partner_br = self.env['res.partner'].search([('student_id','=',student_br.id)]) ## active_ids[0]
-            partner_id = False
-            if partner_br:
-                partner_id = partner_br[0].id
-            print "#### PARTNER ID >>>> ", partner_id
-            print "########### partner_br[0].property_account_receivable_id.id ",partner_br[0].property_account_receivable_id.id
-            invoice_lines = []
-            for pr in product_ids:
-                xline = (0,0,{
-                    'product_id': pr.id,
-                    'price_unit': pr.list_price,
-                    'quantity': 1,
-                    'account_id': pr.categ_id.property_account_income_categ_id.id,
-                    'name': pr.name + "[ "+str(pr.default_code)+"]",
+                partner_br = self.env['res.partner'].search([('student_id','=',student_br.id)]) ## active_ids[0]
+                partner_id = False
+                if partner_br:
+                    partner_id = partner_br[0].id
+                print "#### PARTNER ID >>>> ", partner_id
+                print "########### partner_br[0].property_account_receivable_id.id ",partner_br[0].property_account_receivable_id.id
+                invoice_lines = []
+                for pr in product_ids:
+                    xline = (0,0,{
+                        'product_id': pr.id,
+                        'price_unit': pr.list_price,
+                        'quantity': 1,
+                        'account_id': pr.categ_id.property_account_income_categ_id.id,
+                        'name': pr.name + "[ "+str(pr.default_code)+"]",
+                        })
+                    invoice_lines.append(xline)
+                vals = {
+                        'partner_id': partner_id,
+                        'account_id': partner_br[0].property_account_receivable_id.id,
+                        'invoice_line_ids': invoice_lines,
+                        }
+                invoice_id = invoice_obj.create(vals)
+                print "##### RECORDSET INVOICE >>>> ", invoice_id
+                invoice_list = [x.id for x in student_br.invoice_ids]
+                invoice_list.append(invoice_id.id)
+                student_br.write({
+                    'invoice_ids': [(6, 0, invoice_list)],
                     })
-                invoice_lines.append(xline)
-            vals = {
-                    'partner_id': partner_id,
-                    'account_id': partner_br[0].property_account_receivable_id.id,
-                    'invoice_line_ids': invoice_lines,
-                    }
-            invoice_id = invoice_obj.create(vals)
-            print "##### RECORDSET INVOICE >>>> ", invoice_id
-            invoice_list = [x.id for x in student_br.invoice_ids]
-            invoice_list.append(invoice_id.id)
-            student_br.write({
-                'invoice_ids': [(6, 0, invoice_list)],
-                })
         return True
 
 class academy_materia_list(models.Model):
@@ -199,7 +200,7 @@ class academy_student(models.Model):
     invoice_ids = fields.Many2many('account.invoice',
                                     'student_invoice_rel',
                                     'student_id','invoice_id',
-                                    'Facturas')
+                                    'Facturas', copy=False)
     grado_id = fields.Many2one('academy.grado', 'Grado')
 
     promedio = fields.Float('Promedio', digits=(14,2), compute="calcula_promedio")
@@ -236,6 +237,15 @@ class academy_student(models.Model):
         'active': True,
         }
 
+    # def init(self, cr):
+    #     print "#### ENTRA AQUI ?"
+    #     print "########## SELF >>> >", self
+    #     product_obj = self.env['product.product']
+    #     product_ids = product_obj.search([])
+    #     if product_ids:
+    #         categ_id = self.env['product.category'].search([('name','=','Facturacion Colegiatura')])
+    #         print "######### CATEG ID >>> ", categ_id
+    #     return True
 
     @api.multi
     def done(self):

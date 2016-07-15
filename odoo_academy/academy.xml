@@ -106,6 +106,7 @@
             	<field name="name" />
             	<field name="last_name" />
             	<field name="create_date" />
+            	<field name="state" />
 
             </tree>
         </field>
