@@ -41,7 +41,53 @@ class export_invoices_school_report(models.Model):
         document_csv = ""
         date = datetime.now().strftime('%d-%m-%Y')
         datas_fname = "Reporte Facturacion de Escuelas "+str(date)+".csv" # Nombre del Archivo
-        
+        sl = "\n"
+        document_csv = document_csv+"Reporte General de Facturacion de Escuelas y Estudiantes"+sl
+
+        cabeceras_1 = "Escuela"+","+"Monto Facturado"
+        document_csv = document_csv+sl+cabeceras_1
+
+        self.env.cr.execute("""
+            select partner_id from academy_student
+                group by partner_id;
+            """)
+        cr_res = self.env.cr.fetchall()
+        if not cr_res:
+            return {}
+        partner_list_ids  =[x[0] for x in cr_res if x]
+
+        partner_obj = self.env['res.partner']
+
+        partner_search = partner_obj.search([('id','in',tuple(partner_list_ids))])
+
+        for partner in partner_search:
+            self.env.cr.execute("""
+                select sum(amount_invoice) from academy_student
+                    where partner_id = %s;
+                """, (partner.id,))
+            cr_res = self.env.cr.fetchall()
+            if not cr_res:
+                amount_invoice = 0.0
+            else:
+                amount_invoice = cr_res[0][0]
+            document_csv = document_csv+sl+partner.name+","+str(amount_invoice)
+
+            cabeceras_2 = "Estudiante"+","+"Edad"+","+"Monto Facturado"
+            document_csv = document_csv+sl+cabeceras_2
+            student_obj = self.env['academy.student']
+            student_ids = student_obj.search([('partner_id','=',partner.id)])
+            if student_ids:
+                for student in student_ids:
+                    vals = sl+str(student.name)+" "+str(student.last_name)+","+str(student.age)+","+str(student.amount_invoice)+sl
+                    document_csv=document_csv+sl+vals
+                    document_csv = document_csv+sl+"Facturas del Estudiante"+sl
+
+                    cabeceras_3 = "Folio"+","+"Fecha"+","+"Monto"
+                    document_csv = document_csv+sl+cabeceras_3
+                    for factura in student.invoice_ids:
+                        vals2 = str(factura.number)+","+str(factura.date_invoice if factura.date_invoice else "")+","+str(factura.amount_total)
+                        document_csv = document_csv+sl+vals2
+
         self.write({'cadena_decoding':document_csv,
             'datas_fname':datas_fname,
             'file':base64.encodestring(document_csv),
