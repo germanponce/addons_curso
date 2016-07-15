@@ -2,3 +2,4 @@
 
 import academy
 import models_7
+import wizard

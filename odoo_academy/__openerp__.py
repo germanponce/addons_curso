@@ -25,6 +25,7 @@
     'data': [
         'academy.xml',
         'report/academy_report.xml',
+        'wizard/academy_export.xml',
     ],
     'demo': [
 

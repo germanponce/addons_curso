@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+<data>
+
+        <!--======FORM VIEW ======-->
+        <record id="expor_school_amount_form" model="ir.ui.view">
+            <field name="name">export.invoices.school.report.form</field>
+            <field name="model">export.invoices.school.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Reporte de Facturacion" >
+                    <header>
+                        <field name="datas_fname" invisible="1" />
+                        <field name="download_file" invisible="1" />
+                    </header>
+                    <sheet attrs="{'invisible':[('download_file','=',True)]}">
+                        <separator colspan="4" string="Presiona Exportar para Generar el Reporte y Selecciona el Tipo de Salida"/>
+                        <group>
+                            <field name="type" required="1"/>
+                        </group>
+                        
+                    </sheet>
+                    <sheet attrs="{'invisible':[('download_file','=',False)]}">
+                        <div >
+                            <h2>Generacion Completa</h2>
+                            <p>Descarga el Documento: <field name="file" readonly="1" filename="datas_fname"/></p>
+                            <p> Documento Generado dependiendo la seleccion (CSV - .csv, Excel - .xlsx) y Codificado<strong>Unicode/UTF-8</strong></p> 
+                        </div>
+                    </sheet>
+                    <footer attrs="{'invisible':[('download_file','=',False)]}">
+                        <center>
+                            
+                            <button string="Cerrar" special="cancel"  icon="gtk-cancel" class="oe_highlight"/>
+                        </center>
+                    </footer>
+                    <footer attrs="{'invisible':[('download_file','=',True)]}">
+                        <center>
+                            <button name="process_export" string="Exportar" type="object"  icon="gtk-execute"/>
+                            o
+                            <button string="Cancelar" class="oe_link" special="cancel" icon="gtk-cancel"/>
+                        </center>
+                    </footer>
+                </form>
+                </field>
+            </record>
+
+
+        <!--=================ACCION ASISTENTE==================-->
+        <act_window
+            name="Exportar a CSV"
+            res_model="export.invoices.school.report"
+            src_model="export.invoices.school.report"
+            view_mode="form" target="new"
+            key2="client_action_multi"
+            id="action_export_report_school"/>
+
+    <menuitem id="id_menu_wizard_report_export" parent="id_menu_student" name="Exportar Registros"  action="action_export_report_school" sequence="1"/>
+
+
+</data>
+</openerp>
