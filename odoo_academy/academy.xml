@@ -97,6 +97,32 @@
     </record>
 
 	<!-- VISTAS PRINCIPALES DE MIS CLASES -->
+
+	<record model="ir.ui.view" id="pivot_student_id">
+        <field name="name">academy.student.pivot</field>
+        <field name="model">academy.student</field>
+        <field name="type">pivot</field>
+        <field name="arch" type="xml">
+            <pivot string="Facturacion por Escuela" >
+            	<field name="create_date" type="row"/>
+                <field name="amount_invoice" type="measure"/>
+                <field name="partner_id" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="graph_student_id">
+        <field name="name">academy.student.graph</field>
+        <field name="model">academy.student</field>
+        <field name="type">graph</field>
+        <field name="arch" type="xml">
+            <graph string="Facturacion por Escuela" >
+            	<field name="partner_id"/>
+                <field name="amount_invoice" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
 	<record model="ir.ui.view" id="tree_student_id">
         <field name="name">academy.student.tree</field>
         <field name="model">academy.student</field>
@@ -106,6 +132,7 @@
             	<field name="name" />
             	<field name="last_name" />
             	<field name="create_date" />
+            	<field name="amount_invoice" />
             	<field name="state" />
 
             </tree>
@@ -120,7 +147,7 @@
             <form string="Formulario de Registro" >
             	<header>
             		<button string="Confirmar" name="confirm" type="object"  icon="gtk-ok" states="draft" />
-            		<button string="Cancelar" name="cancel" type="object"  icon="gtk-cancel" states="draft" />
+            		<button string="Cancelar" name="cancel" type="object"  icon="gtk-cancel" states="draft,progress" />
             		<button string="Egresar" name="done" type="object"  icon="gtk-execute" states="progress" />
 
             		<button string="Borrador" name="draft" type="object"  icon="gtk-ok" states="cancel" />
@@ -188,7 +215,7 @@
 	<record model="ir.actions.act_window" id="act_student_academy">
         <field name="name">Registro de Estudiantes</field>
         <field name="res_model">academy.student</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
     </record>
 
 	<record model="ir.actions.act_window" id="act_student_calificaciones">
