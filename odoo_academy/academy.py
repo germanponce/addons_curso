@@ -248,6 +248,59 @@ class academy_student(models.Model):
     #     return True
 
     @api.multi
+    def calcula_amount_invoice(self, invoice_ids):
+        print "##### METODO CALCULADO"
+        print "##### METODO CALCULADO",invoice_ids
+        if not invoice_ids:
+            return 0.0
+        invoice_ids = [x.id for x in invoice_ids]
+        self.env.cr.execute("""
+            select sum(amount_total) from account_invoice
+                where id in %s
+            """, (tuple(invoice_ids),))
+        cr_res = self.env.cr.fetchall()
+        if cr_res:
+            amount_invoice_manual = cr_res[0][0]
+        else:
+            amount_invoice_manual = 0.0
+        return amount_invoice_manual
+
+    @api.multi
+    def calcula_amount_taxes(self, invoice_ids):
+        print "##### METODO CALCULADO"
+        print "##### METODO CALCULADO",invoice_ids
+        if not invoice_ids:
+            return 0.0
+        invoice_ids = [x.id for x in invoice_ids]
+        self.env.cr.execute("""
+            select sum(amount_tax) from account_invoice
+                where id in %s
+            """, (tuple(invoice_ids),))
+        cr_res = self.env.cr.fetchall()
+        if cr_res:
+            amount_invoice_manual = cr_res[0][0]
+        else:
+            amount_invoice_manual = 0.0
+        return amount_invoice_manual
+
+    @api.multi
+    def print_report(self):
+        # datas = {
+        #         'ids': self.ids,
+        #         'model': 'academy.student',
+        #         }
+        # return {
+        #         'type': 'ir.actions.report.xml',
+        #         'report_name': 'odoo_academy.template_report_estudiante',
+        #         'datas': datas,
+        #         'name': 'Estudiante ' + self.name+ ' '+self.last_name
+        #         }
+        # get_action Recibe
+        # Los Browse Records para la impresión del Reporte y seguido del nombre del reporte
+        return self.env['report'].get_action(self, 'odoo_academy.template_report_estudiante')
+ 
+
+    @api.multi
     def done(self):
         self.state = 'done'
         return True

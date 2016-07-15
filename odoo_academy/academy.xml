@@ -153,6 +153,8 @@
             		<button string="Borrador" name="draft" type="object"  icon="gtk-ok" states="cancel" />
             		<button name="%(student_invoice_act)d" string="Generar Factura"
                         type="action" class="btn-primary" icon="gtk-execute"/>
+
+                    <button string="Imprimir Reporte" name="print_report" type="object"  icon="gtk-execute"/>
             		<!-- 
 						Function,
 						Action,

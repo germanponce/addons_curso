@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Estructura de un Reporte Qweb <template id="template_report_estudiante">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="report.external_layout">
+                        <div class="page">
+                            
+                    </div>
+                    </t>
+                </t>
+            </t>
+        </template> -->
+        <template id="template_report_estudiante">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="report.external_layout">
+                        <div class="page">
+                           <h1>
+                                <span t-field="o.name" /> <span t-field="o.last_name" />
+                           </h1>
+                           <span t-field="o.photo" t-field-options="{&quot;widget&quot;: &quot;image&quot;}"/>
+                           <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Escuela</th>
+                                    <th>Grado</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        <tr >
+                            <td>
+                               <p></p>
+                               <span t-field="o.partner_id.name"/>
+                               <p></p>
+                            </td>
+                            <td>
+                               <p></p>
+                               <span t-field="o.grado_id.complete_name"/>
+                               <p></p>
+                            </td>
+                            <td>
+                               <p></p>
+                               <span t-field="o.create_date"/>
+                               <p></p>
+                            </td>
+                        </tr>
+                            </tbody>
+                        </table>
+                        <h2>
+                            Calificaciones:
+                        </h2>
+                        <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Materia</th>
+                            <th>Calificacion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                <tr t-foreach="o.calificaciones_ids" t-as="l">
+                    <td>
+                       <p></p>
+                       <span t-field="l.name.name"/>
+                       <p></p>
+                    </td>
+                    
+                    <td>
+                       <p></p>
+                       <span t-field="l.calificacion"/>
+                       <p></p>
+                    </td>
+                </tr>
+                    </tbody>
+                </table>
+                <div class="row" name="promedio">
+                    <div class="col-xs-4 pull-right">
+                        <table class="table table-condensed">
+                            <tr class="border-black">
+                                <td><strong>Promedio</strong></td>
+                                <td class="text-right">
+                                    <span t-field="o.promedio"
+                                        />
+                                </td>
+                            </tr>
+                            
+                        </table>
+                    </div>
+                </div>
+
+                <h2>
+                    Facturas Generadas:
+                </h2>
+                <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Folio</th>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+            <tr t-foreach="o.invoice_ids" t-as="inv">
+                <td>
+                   <p></p>
+                   <span t-field="inv.number"/>
+                   <p></p>
+                </td>
+                
+                <td>
+                   <p></p>
+                   <span t-field="inv.date_invoice"/>
+                   <p></p>
+                </td>
+                <td>
+                   <p></p>
+                   <span t-field="inv.amount_total"/>
+                   <p></p>
+                </td>
+            </tr>
+                </tbody>
+            </table>
+                <div class="row" name="amount_invoice">
+                    <div class="col-xs-4 pull-right">
+                        <table class="table table-condensed">
+                            <tr class="border-black">
+                                <td><strong>Impuestos</strong>
+                            </td>
+                                <!-- <td class="text-right">
+                                    <span t-field="o.amount_invoice"
+                                        />
+                                </td> -->
+                                <td class="text-right">
+                                    <span t-esc="o.calcula_amount_taxes(o.invoice_ids)"
+                                        />
+                                </td>
+                            </tr>
+                            <tr class="border-black">
+                                <td><strong>Total Facturado</strong>
+                            </td>
+                                <!-- <td class="text-right">
+                                    <span t-field="o.amount_invoice"
+                                        />
+                                </td> -->
+                                <td class="text-right">
+                                    <span t-esc="o.calcula_amount_invoice(o.invoice_ids)"
+                                        />
+                                </td>
+                            </tr>
+                            
+                        </table>
+                    </div>
+                </div>
+
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <report 
+            id="report_student"
+            string="Reporte Estudiante"
+            model="academy.student" 
+            report_type="qweb-pdf"
+            file="odoo_academy.template_report_estudiante" 
+            name="odoo_academy.template_report_estudiante"
+        />
+
+    </data>
+</openerp>

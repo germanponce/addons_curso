@@ -11,6 +11,10 @@
 
     Para poder Facturar es necesario tener productos con la categoria Facturacion Colegiatura, de no hacerlo solo agregara Facturas Vacias.
 
+    Para trabajar los reportes el modulo en Excel es necesario Instalar la libreri de python xlxswriter
+        - sudo pip install xlxswriter
+
+
 
     """,
     'author': 'German Ponce Dominguez',
@@ -20,6 +24,7 @@
     'depends' : ['sale','account','stock','mail'],
     'data': [
         'academy.xml',
+        'report/academy_report.xml',
     ],
     'demo': [
 
