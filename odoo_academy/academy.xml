@@ -27,6 +27,26 @@
         </field>
     </record> -->
 
+    <!-- PLANIFICACION DE TAREAS-->
+
+     <record id="ir_cron_student_invoice" model="ir.cron">
+            <field name="name">Revision de Facturacion de Estudiantes</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="True"/>
+            <field name="model">academy.rev</field>
+            <field name="function">_check_invoices</field>
+            <field name="args">()</field>
+            <!-- Active flag is set on fetchmail_server.create/write -->
+            <field name="active" eval="True"/>
+        </record>
+
+    <!-- Grupos de Acceso -->
+    <record id="group_access_complete" model="res.groups">
+        <field name="name">Grupo Creado para Permisos modulo Academy</field>
+    </record>
+
 	<!-- VISTAS PARA UN ASISTENTE -->
 	    <record id="wizard_student_invoice" model="ir.ui.view">
 	    <field name="name">make.student.invoice.form</field>
@@ -128,11 +148,12 @@
         <field name="model">academy.student</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="Listado de Estudiantes">
+            <tree string="Listado de Estudiantes" decoration-info="invoiced == False" decoration-muted="invoiced == True">
             	<field name="name" />
             	<field name="last_name" />
             	<field name="create_date" />
             	<field name="amount_invoice" />
+                <field name="invoiced" />
             	<field name="state" />
 
             </tree>

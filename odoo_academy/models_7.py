@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from openerp.osv import fields, osv
 
 # class stock_warehouse(osv.osv):
@@ -11,6 +10,32 @@ from openerp.osv import fields, osv
 #         res = super(stock_warehouse, self).create(cr, uid, vals, context)
 #         return res
 
+class academy_rev(osv.osv):
+    _name = 'academy.rev'
+    _description = 'Descripcion del Modelo'
+    _columns = {
+        'name':fields.boolean('Label', required=False), 
+    }
+
+    def _check_invoices(self, cr, uid, automatic=False, use_new_cursor=False, context=None):
+        print "#### SE ESTA EJECUTANDO >>>> "
+        print "#### SE ESTA EJECUTANDO >>>> "
+        cr.execute("""
+            select id from academy_student 
+                where id in 
+                (select student_id from student_invoice_rel);
+            """)
+        cr_res = cr.fetchall()
+        student_ids = [x[0] for x in cr_res if x]
+        student_ids = self.pool.get('academy.student').search(
+            cr, uid, [('invoiced','=',False),('id','in',tuple(student_ids))])
+        print "#### SUTDENT IDS >>> ", student_ids
+        self.pool.get('academy.student').write(cr, uid, student_ids,
+                            {'invoiced':True})
+        
+
+        return True
+
 class academy_califiacion(osv.osv):
     _name = 'academy.calificacion'
     _description = 'Calificaciones del Estudiante'
@@ -21,6 +46,7 @@ class academy_califiacion(osv.osv):
             'ID Ref'),
     }
     
+
     def _check_calificacion(self, cr, uid, ids, context=None): 
         for rec in self.browse(cr, uid, ids, context):
             print "############ rec.calificacion ",rec.calificacion

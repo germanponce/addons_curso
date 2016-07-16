@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_student,academy.student,model_academy_student,odoo_academy.group_access_complete,1,1,1,1
+access_academy_califiacion,academy.califiacion,model_academy_calificacion,odoo_academy.group_access_complete,1,1,1,1
+access_academy_materia,academy.materia,model_academy_materia,odoo_academy.group_access_complete,1,1,1,1

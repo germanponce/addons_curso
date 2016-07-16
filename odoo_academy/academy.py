@@ -206,6 +206,8 @@ class academy_student(models.Model):
     promedio = fields.Float('Promedio', digits=(14,2), compute="calcula_promedio")
     amount_invoice = fields.Float('Monto Facturado', digits=(14,2), compute="calcula_amount", store=True)
 
+    invoiced = fields.Boolean('Facturado')
+    
     @api.onchange('grado_id')
     def onchange_grado(self):
         if not self.grado_id:

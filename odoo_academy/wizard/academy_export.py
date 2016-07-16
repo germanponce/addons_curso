@@ -113,6 +113,9 @@ class export_invoices_school_report(models.Model):
 
         # Add a bold format to use to highlight cells.
         #### ESTILOS DE CELDAS #####
+        money = workbook.add_format({'num_format': '$#,##0'})
+        money.set_align('right')
+
         bold = workbook.add_format({'bold': True})
         format_red = workbook.add_format({'bold': True})
 
@@ -140,9 +143,6 @@ class export_invoices_school_report(models.Model):
         format_gray_right.set_bg_color('#DADEDA')
         format_gray_right.set_align('right')
 
-        worksheet.write('A1', 'Escuela', format_red)
-        worksheet.write('B1', 'Total Facturacion', format_red)
-
         self.env.cr.execute("""
             select partner_id from academy_student;
             """)
@@ -151,9 +151,13 @@ class export_invoices_school_report(models.Model):
             return {}
         school_ids = [x[0] for x in cr_res if x]
         partner_obj = self.env['res.partner']
-        a = 2
-        b = 2
+        a = 1
+        b = 1
         for partner in partner_obj.browse(school_ids):
+            worksheet.write('A%s' %a, 'Escuela', format_red)
+            worksheet.write('B%s' %b, 'Total Facturacion', format_red)
+            a +=1
+            b+=1
             self.env.cr.execute("""
                 select sum(amount_invoice) from academy_student
                     where partner_id=%s
@@ -165,15 +169,15 @@ class export_invoices_school_report(models.Model):
                 amount_invoice = 0.0
 
             worksheet.write('A%s' % a, partner.name)
-            worksheet.write('B%s' % b, str(amount_invoice))
+            worksheet.write('B%s' % b, float(amount_invoice), money)
             student_ids = []
             self.env.cr.execute("""
                 select id from academy_student where partner_id=%s
                 """,(partner.id,))
             cr_res = self.env.cr.fetchall()
             student_ids = [x[0] for x in cr_res]
-            a+=1
-            b+=1
+            a+=2
+            b+=2
             c=a
             worksheet.write('A%s' % a, 'Estudiante',format_gray)
             worksheet.write('B%s' % b, 'CURP',format_gray)
@@ -184,10 +188,10 @@ class export_invoices_school_report(models.Model):
             for student in self.env['academy.student'].browse(student_ids):
                 worksheet.write('A%s' % a, student.name+" "+student.last_name)
                 worksheet.write('B%s' % b, student.curp)
-                worksheet.write('C%s' % c, str(student.amount_invoice))
-                a+=1
-                b+=1
-                c+=1
+                worksheet.write('C%s' % c, float(student.amount_invoice), money)
+                a+=2
+                b+=2
+                c+=2
                 worksheet.write('A%s' % a, "Facturas",format_red)
                 a+=1
                 b+=1
@@ -202,7 +206,7 @@ class export_invoices_school_report(models.Model):
                 for factura in student.invoice_ids:
                     worksheet.write('A%s' % a, str(factura.number))
                     worksheet.write('B%s' % b, str(factura.date_invoice))
-                    worksheet.write('C%s' % c, str(factura.amount_total))
+                    worksheet.write('C%s' % c, float(factura.amount_total), money)
                     a+=1
                     b+=1
                     c+=1

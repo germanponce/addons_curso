@@ -14,7 +14,10 @@
     Para trabajar los reportes el modulo en Excel es necesario Instalar la libreri de python xlxswriter
         - sudo pip install xlxswriter
         - Documentacion: http://xlsxwriter.readthedocs.io/
-
+    
+    Mas Informacion:
+        - http://fundamentos-de-desarrollo-en-odoo.readthedocs.io/es/latest/index.html
+        - https://odoo-development.readthedocs.io/en/latest/
 
     """,
     'author': 'German Ponce Dominguez',
@@ -26,6 +29,7 @@
         'academy.xml',
         'report/academy_report.xml',
         'wizard/academy_export.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [
 
