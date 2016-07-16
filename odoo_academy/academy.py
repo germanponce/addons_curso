@@ -2,11 +2,27 @@
 
 from openerp import models, fields, api, _
 from openerp.exceptions import UserError, RedirectWarning, ValidationError
+from openerp.addons.report_xlsx.report.report_xlsx import ReportXlsx
+
+# class partner_xlsx(ReportXlsx):
+
+#     def generate_xlsx_report(self, workbook, data, partners):
+#         for obj in partners:
+#             report_name = obj.name
+#             # One sheet by partner
+#             sheet = workbook.add_worksheet(report_name[:31])
+#             bold = workbook.add_format({'bold': True})
+#             sheet.write(0, 0, obj.name, bold)
+
+
+# partner_xlsx('report.res.partner.xlsx',
+#              'res.partner')
 
 # class stock_warehouse(models.Model):
 #     _name = 'stock.warehouse'
 #     _inherit = ['mail.thread', 'ir.needaction_mixin','stock.warehouse']
-    
+
+
 class make_student_invoice (models.TransientModel):
     _name = 'make.student.invoice'
     _description = 'Asistente para Generacion de Facturas'
@@ -207,7 +223,7 @@ class academy_student(models.Model):
     amount_invoice = fields.Float('Monto Facturado', digits=(14,2), compute="calcula_amount", store=True)
 
     invoiced = fields.Boolean('Facturado')
-    
+
     @api.onchange('grado_id')
     def onchange_grado(self):
         if not self.grado_id:

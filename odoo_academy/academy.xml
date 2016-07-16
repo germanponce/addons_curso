@@ -27,6 +27,18 @@
         </field>
     </record> -->
 
+    <!-- Reporte Xlsx Integrado -->
+    
+<!-- <report
+    id="partner_xlsx"
+    model="res.partner"
+    string="Reporte en XLSX"
+    report_type="xlsx"
+    name="res.partner.xlsx"
+    file="res.partner.xlsx"
+    attachment_use="False"
+/> -->
+
     <!-- PLANIFICACION DE TAREAS-->
 
      <record id="ir_cron_student_invoice" model="ir.cron">
